@@ -1,0 +1,37 @@
+Linux *is* an operating system.
+Windows *is* an operating system. 
+Photoshop *is* an application.
+Photoshop *runs only on* Windows.
+Microsoft *develops* Windows.
+Microsoft *develops* Surface.
+Alice *uses* Surface.
+Bob *uses* Photoshop.
+
+If someone *uses* something & something *runs only on* something else, then someone *uses* something else.
+If someone *uses* something & something *is* something else, then someone *uses* something else.
+If something *is* an application, then something *is* software.
+If something *is* an operating system, then something *is* software.
+If something *is* software, then something *has* bugs.
+If someone *develops* something & something *has* something else, then someone *is responsible for* something else *in* something.
+If someone *uses* something & someone else *is responsible for* bugs *in* something, then someone *is angry at* someone else.
+
+What Bob *uses*?
+> Photoshop
+> Windows
+> an application
+> an operating system
+> software
+
+What *has* bugs?
+> Linux
+> Windows
+> Photoshop
+
+What Windows *has*?
+> bugs
+
+Who *is responsible for* bugs *in* Windows?
+> Microsoft
+
+Who *is angry at* Microsoft?
+> Bob
