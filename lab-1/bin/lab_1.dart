@@ -10,9 +10,17 @@ void main(List<String> arguments) {
   final lexer = Lexer((tokens) {
     switch (parse(tokens)) {
       case Success success:
-        base.feed(success.sentence)?.forEach(print);
+        final response = base.feed(success.sentence);
+
+        if (response != null) {
+          for (final noun in response) {
+            print('> $noun');
+          }
+
+          print('');
+        }
       case Failure _:
-        print(":(Parsing failure):");
+        print(':(Parsing failure):');
       case Waiting _:
     }
   });

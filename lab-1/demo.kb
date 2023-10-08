@@ -6,6 +6,7 @@ Microsoft *develops* Windows.
 Microsoft *develops* Surface.
 Alice *uses* Surface.
 Bob *uses* Photoshop.
+Eve *prefers* Linux *to* Windows.
 
 If someone *uses* something & something *runs only on* something else, then someone *uses* something else.
 If someone *uses* something & something *is* something else, then someone *uses* something else.
@@ -14,6 +15,8 @@ If something *is* an operating system, then something *is* software.
 If something *is* software, then something *has* bugs.
 If someone *develops* something & something *has* something else, then someone *is responsible for* something else *in* something.
 If someone *uses* something & someone else *is responsible for* bugs *in* something, then someone *is angry at* someone else.
+If someone *prefers* something *to* something else, then someone *avoids* something else.
+If someone *avoids* something & something else *runs only on* something, then someone *avoids* something else.
 
 What Bob *uses*?
 > Photoshop
@@ -35,3 +38,7 @@ Who *is responsible for* bugs *in* Windows?
 
 Who *is angry at* Microsoft?
 > Bob
+
+What Eve *avoids*?
+> Windows
+> Photoshop
