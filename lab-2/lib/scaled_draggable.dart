@@ -14,10 +14,7 @@ class ScaledDraggable<DragDataType extends Object> extends StatelessWidget {
   build(context) {
     late final feedback = SizedBox.fromSize(
       size: (context.findRenderObject() as RenderBox).size,
-      child: Opacity(
-        opacity: .5,
-        child: child,
-      ),
+      child: child,
     );
 
     return Draggable(

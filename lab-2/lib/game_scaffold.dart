@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'door.dart';
-import 'game.dart';
-import 'ghost.dart';
-import 'position.dart';
+import 'core/door.dart';
+import 'core/game.dart';
+import 'core/ghost.dart';
+import 'core/position.dart';
+import 'ghost_icon.dart';
 import 'scaled_draggable.dart';
 import 'wall.dart';
 
@@ -46,16 +47,19 @@ class _State extends State<GameScaffold> {
               },
             ),
             const Spacer(),
-            ScaledDraggable(
-              dragData: RandomGhost(const Position(x: 0, y: 0)),
-              child: FloatingActionButton(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-                onPressed: () {},
-                heroTag: null,
-                child: const Icon(Icons.pest_control_rodent),
+            for (final ghost in [
+              const BarrierGhost(),
+              const AStarGhost(),
+              DefenseGhost(),
+              const VisionGhost(),
+              const RandomGhost(),
+            ]) ...[
+              const SizedBox(width: 8),
+              ScaledDraggable(
+                dragData: ghost,
+                child: GhostIcon(ghost),
               ),
-            ),
+            ],
           ],
         ),
       ),
@@ -95,15 +99,7 @@ class _State extends State<GameScaffold> {
                     game.map.doors.contains(NorthSouthDoor(x: x, northY: y))
                         ? const Spacer(flex: 10)
                         : const Wall.northSouth(),
-                    {
-                              NorthSouthDoor(x: x, northY: y),
-                              NorthSouthDoor(x: x + 1, northY: y),
-                              WestEastDoor(westX: x, y: y),
-                              WestEastDoor(westX: x, y: y + 1),
-                            }.intersection(game.map.doors).length ==
-                            4
-                        ? const Spacer()
-                        : const Wall.westEast(),
+                    _getJunction(Position(x: x, y: y)),
                   ]
                 ],
               ),
@@ -127,18 +123,13 @@ class _State extends State<GameScaffold> {
       );
     }
 
-    final ghost =
+    final spawnedGhost =
         game.ghosts.where((ghost) => ghost.position == position).firstOrNull;
 
-    if (ghost != null) {
-      return const Expanded(
+    if (spawnedGhost != null) {
+      return Expanded(
         flex: 10,
-        child: FittedBox(
-          child: Icon(
-            Icons.pest_control_rodent,
-            color: Colors.red,
-          ),
-        ),
+        child: FittedBox(child: GhostIcon(spawnedGhost.ghost)),
       );
     }
 
@@ -164,13 +155,26 @@ class _State extends State<GameScaffold> {
           );
         },
         onAccept: (ghost) {
-          ghost.position = position;
           setState(() {
-            game.ghosts.add(ghost);
+            game.spawn(ghost, position);
           });
         },
       ),
     );
+  }
+
+  Widget _getJunction(Position position) {
+    final (x, y) = (position.x, position.y);
+    final doors = {
+      NorthSouthDoor(x: x, northY: y),
+      NorthSouthDoor(x: x + 1, northY: y),
+      WestEastDoor(westX: x, y: y),
+      WestEastDoor(westX: x, y: y + 1),
+    };
+
+    doors.removeAll(game.map.doors);
+
+    return doors.isEmpty ? const Spacer() : const Wall.westEast();
   }
 
   void _move(RawKeyEvent event) {

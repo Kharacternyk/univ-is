@@ -1,20 +1,45 @@
 import 'door.dart';
-import 'game_map.dart';
-import 'ghost.dart';
 import 'position.dart';
 
-class Game {
-  final GameMap map = GameMap(
+class GameMap {
+  final Iterable<Door> doors;
+  final int width;
+  final int height;
+
+  const GameMap({
+    required this.doors,
+    required this.width,
+    required this.height,
+  });
+
+  Iterable<Position> getAdjacent(Position position) sync* {
+    final (x, y) = (position.x, position.y);
+
+    if (doors.contains(NorthSouthDoor(x: x, northY: y - 1))) {
+      yield Position(x: x, y: y - 1);
+    }
+    if (doors.contains(NorthSouthDoor(x: x, northY: y))) {
+      yield Position(x: x, y: y + 1);
+    }
+    if (doors.contains(WestEastDoor(westX: x - 1, y: y))) {
+      yield Position(x: x - 1, y: y);
+    }
+    if (doors.contains(WestEastDoor(westX: x, y: y))) {
+      yield Position(x: x + 1, y: y);
+    }
+  }
+
+  static final common = GameMap(
     doors: {
       const NorthSouthDoor(x: 0, northY: 0),
       const NorthSouthDoor(x: 0, northY: 1),
       const WestEastDoor(westX: 0, y: 0),
       const WestEastDoor(westX: 0, y: 2),
+      const WestEastDoor(westX: 0, y: 3),
       const NorthSouthDoor(x: 1, northY: 0),
       const WestEastDoor(westX: 1, y: 0),
       const WestEastDoor(westX: 1, y: 1),
       const WestEastDoor(westX: 1, y: 2),
-      const NorthSouthDoor(x: 1, northY: 2),
       const NorthSouthDoor(x: 1, northY: 3),
       const NorthSouthDoor(x: 1, northY: 4),
       const NorthSouthDoor(x: 1, northY: 5),
@@ -23,13 +48,11 @@ class Game {
       const NorthSouthDoor(x: 0, northY: 3),
       const NorthSouthDoor(x: 0, northY: 4),
       const NorthSouthDoor(x: 0, northY: 5),
-      const NorthSouthDoor(x: 0, northY: 6),
       const WestEastDoor(westX: 0, y: 6),
       const WestEastDoor(westX: 0, y: 7),
       const WestEastDoor(westX: 1, y: 4),
       const WestEastDoor(westX: 2, y: 4),
       const WestEastDoor(westX: 3, y: 4),
-      const WestEastDoor(westX: 1, y: 7),
       const WestEastDoor(westX: 2, y: 7),
       const WestEastDoor(westX: 3, y: 7),
       const NorthSouthDoor(x: 4, northY: 4),
@@ -55,7 +78,6 @@ class Game {
       const WestEastDoor(westX: 3, y: 0),
       const WestEastDoor(westX: 4, y: 0),
       const WestEastDoor(westX: 5, y: 0),
-      const WestEastDoor(westX: 6, y: 0),
       const NorthSouthDoor(x: 6, northY: 0),
       const NorthSouthDoor(x: 7, northY: 0),
       const WestEastDoor(westX: 4, y: 1),
@@ -69,7 +91,6 @@ class Game {
       const NorthSouthDoor(x: 6, northY: 4),
       const WestEastDoor(westX: 4, y: 6),
       const WestEastDoor(westX: 5, y: 6),
-      const WestEastDoor(westX: 6, y: 6),
       const WestEastDoor(westX: 5, y: 7),
       const WestEastDoor(westX: 6, y: 7),
       const NorthSouthDoor(x: 5, northY: 6),
@@ -88,71 +109,66 @@ class Game {
       const WestEastDoor(westX: 5, y: 2),
       const NorthSouthDoor(x: 5, northY: 1),
       const NorthSouthDoor(x: 3, northY: 4),
+      const WestEastDoor(westX: 8, y: 6),
+      const WestEastDoor(westX: 7, y: 6),
+      const WestEastDoor(westX: 8, y: 7),
+      const NorthSouthDoor(x: 9, northY: 6),
+      const NorthSouthDoor(x: 8, northY: 6),
+      const NorthSouthDoor(x: 9, northY: 4),
+      const NorthSouthDoor(x: 9, northY: 3),
+      const NorthSouthDoor(x: 8, northY: 5),
+      const WestEastDoor(westX: 7, y: 4),
+      const WestEastDoor(westX: 8, y: 4),
+      const WestEastDoor(westX: 8, y: 5),
+      const NorthSouthDoor(x: 9, northY: 0),
+      const NorthSouthDoor(x: 9, northY: 1),
+      const NorthSouthDoor(x: 9, northY: 2),
+      const WestEastDoor(westX: 7, y: 2),
+      const WestEastDoor(westX: 7, y: 3),
+      const NorthSouthDoor(x: 8, northY: 2),
+      const NorthSouthDoor(x: 8, northY: 1),
+      const NorthSouthDoor(x: 8, northY: 0),
+      const WestEastDoor(westX: 8, y: 0),
+      const WestEastDoor(westX: 8, y: 2),
+      const WestEastDoor(westX: 7, y: 7),
+      const WestEastDoor(westX: 0, y: 8),
+      const WestEastDoor(westX: 1, y: 8),
+      const WestEastDoor(westX: 2, y: 8),
+      const WestEastDoor(westX: 3, y: 8),
+      const WestEastDoor(westX: 4, y: 8),
+      const WestEastDoor(westX: 5, y: 8),
+      const WestEastDoor(westX: 6, y: 8),
+      const WestEastDoor(westX: 8, y: 8),
+      const WestEastDoor(westX: 0, y: 9),
+      const WestEastDoor(westX: 1, y: 9),
+      const WestEastDoor(westX: 3, y: 9),
+      const WestEastDoor(westX: 4, y: 9),
+      const WestEastDoor(westX: 5, y: 9),
+      const WestEastDoor(westX: 6, y: 9),
+      const WestEastDoor(westX: 7, y: 9),
+      const WestEastDoor(westX: 8, y: 9),
+      const NorthSouthDoor(x: 0, northY: 8),
+      const NorthSouthDoor(x: 1, northY: 8),
+      const NorthSouthDoor(x: 2, northY: 8),
+      const NorthSouthDoor(x: 3, northY: 8),
+      const NorthSouthDoor(x: 4, northY: 8),
+      const NorthSouthDoor(x: 7, northY: 8),
+      const NorthSouthDoor(x: 8, northY: 8),
+      const NorthSouthDoor(x: 9, northY: 8),
+      const NorthSouthDoor(x: 0, northY: 7),
+      const NorthSouthDoor(x: 1, northY: 7),
+      const NorthSouthDoor(x: 2, northY: 7),
+      const NorthSouthDoor(x: 3, northY: 7),
+      const NorthSouthDoor(x: 6, northY: 7),
+      const NorthSouthDoor(x: 7, northY: 7),
+      const NorthSouthDoor(x: 8, northY: 7),
+      const NorthSouthDoor(x: 9, northY: 7),
+      const NorthSouthDoor(x: 2, northY: 6),
+      const WestEastDoor(westX: 8, y: 1),
+      const WestEastDoor(westX: 7, y: 0),
+      const WestEastDoor(westX: 7, y: 1),
     },
-    width: 8,
-    height: 8,
+    width: 10,
+    height: 10,
   );
-  var pacman = const Position(x: 0, y: 0);
-  final ghosts = <Ghost>[];
-  late final stars = {
-    for (var x = 0; x < map.width; ++x) ...[
-      for (var y = 0; y < map.height; ++y)
-        if (x > 0 || y > 0) Position(x: x, y: y),
-    ]
-  };
-
-  bool move(Position position) {
-    if (_getMoves(pacman).contains(position)) {
-      pacman = position;
-      stars.remove(position);
-      _moveGhosts();
-
-      return true;
-    }
-
-    return false;
-  }
-
-  bool get lost =>
-      _getMoves(pacman).isEmpty ||
-      ghosts.any((ghost) => ghost.position == pacman);
-
-  int get score => map.width * map.height - stars.length - 1;
-
-  void _moveGhosts() {
-    for (final ghost in ghosts) {
-      switch (ghost) {
-        case RandomGhost _:
-          final moves = _getMoves(ghost.position).toList();
-
-          moves.shuffle();
-          ghost.position = moves.firstOrNull ?? ghost.position;
-      }
-    }
-  }
-
-  Iterable<Position> _getMoves(Position position) sync* {
-    for (final position in _getAdjacent(position)) {
-      if (!ghosts.any((ghost) => ghost.position == position)) {
-        yield position;
-      }
-    }
-  }
-
-  Iterable<Position> _getAdjacent(Position position) sync* {
-    final (x, y) = (position.x, position.y);
-
-    if (map.doors.contains(NorthSouthDoor(x: x, northY: y - 1))) {
-      yield Position(x: x, y: y - 1);
-    }
-    if (map.doors.contains(NorthSouthDoor(x: x, northY: y))) {
-      yield Position(x: x, y: y + 1);
-    }
-    if (map.doors.contains(WestEastDoor(westX: x - 1, y: y))) {
-      yield Position(x: x - 1, y: y);
-    }
-    if (map.doors.contains(WestEastDoor(westX: x, y: y))) {
-      yield Position(x: x + 1, y: y);
-    }
-  }
 }

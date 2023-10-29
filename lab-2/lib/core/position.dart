@@ -9,4 +9,7 @@ class Position {
 
   @override
   int get hashCode => Object.hash(x, y);
+
+  @override
+  toString() => '($x, $y)';
 }
