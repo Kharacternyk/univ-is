@@ -69,8 +69,9 @@ class AStarGhost extends Ghost {
   getMove(game, position) {
     final set = <Position>{};
     final queue = PriorityQueue<List<Position>>((first, second) {
-      return (first.length + _estimateLength(first.last, game.pacman))
-          .compareTo(second.length + _estimateLength(second.last, game.pacman));
+      return (first.length + first.last.getManhattanDistance(game.pacman))
+          .compareTo(
+              second.length + second.last.getManhattanDistance(game.pacman));
     });
 
     for (final move in game.getMoves(position)) {
@@ -95,9 +96,50 @@ class AStarGhost extends Ghost {
 
     return super.getMove(game, position);
   }
+}
 
-  int _estimateLength(Position from, Position to) {
-    return (to.x - from.x).abs() + (to.y - from.y).abs();
+class GreedyGhost extends Ghost {
+  List<Position>? _path;
+  Position? _seenPacman;
+
+  @override
+  getMove(game, position) {
+    if (_seenPacman != game.pacman) {
+      _seenPacman = game.pacman;
+      _path = null;
+    }
+
+    _path ??= _getPath(game, position, {});
+
+    final move = _path?.firstOrNull;
+
+    if (move != null) {
+      _path?.removeAt(0);
+    }
+
+    return move ?? super.getMove(game, position);
+  }
+
+  List<Position> _getPath(Game game, Position position, Set<Position> seen) {
+    final moves = game.getMoves(position).sorted((first, second) {
+      return first
+          .getManhattanDistance(game.pacman)
+          .compareTo(second.getManhattanDistance(game.pacman));
+    });
+
+    for (final move in moves) {
+      if (move == game.pacman) {
+        return [move];
+      } else if (!seen.contains(move)) {
+        final next = _getPath(game, move, seen.union({position}));
+
+        if (next.isNotEmpty) {
+          return [move, ...next];
+        }
+      }
+    }
+
+    return [];
   }
 }
 

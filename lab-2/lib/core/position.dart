@@ -4,6 +4,10 @@ class Position {
 
   const Position({required this.x, required this.y});
 
+  int getManhattanDistance(Position other) {
+    return (x - other.x).abs() + (y - other.y).abs();
+  }
+
   @override
   operator ==(other) => other is Position && x == other.x && y == other.y;
 

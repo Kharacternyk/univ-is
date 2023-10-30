@@ -18,7 +18,7 @@ class Game {
   Iterable<Position> get stars => _stars;
 
   bool move(Position position) {
-    if (getMoves(pacman).contains(position)) {
+    if (position == pacman || getMoves(pacman).contains(position)) {
       _pacman = position;
       _stars.remove(position);
       _moveGhosts();
@@ -33,7 +33,7 @@ class Game {
       getMoves(pacman).isEmpty ||
       ghosts.any((ghost) => ghost.position == pacman);
 
-  int get score => map.width * map.height - stars.length - 1;
+  int get score => map.width * map.height - stars.length;
 
   void spawn(Ghost ghost, Position position) {
     _ghosts.add(SpawnedGhost(ghost, position));
