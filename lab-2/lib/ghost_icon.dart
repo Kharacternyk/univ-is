@@ -32,6 +32,10 @@ class GhostIcon extends StatelessWidget {
             Icons.forest,
             color: Colors.green,
           ),
+        GreedyGhost _ => const Icon(
+            Icons.cruelty_free,
+            color: Colors.teal,
+          ),
       },
     );
   }

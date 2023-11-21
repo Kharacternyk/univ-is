@@ -50,6 +50,7 @@ class _State extends State<GameScaffold> {
             for (final ghost in [
               const BarrierGhost(),
               const AStarGhost(),
+              GreedyGhost(),
               DefenseGhost(),
               const VisionGhost(),
               const RandomGhost(),
@@ -185,6 +186,7 @@ class _State extends State<GameScaffold> {
         LogicalKeyboardKey.keyD => Position(x: x + 1, y: y),
         LogicalKeyboardKey.keyS => Position(x: x, y: y + 1),
         LogicalKeyboardKey.keyA => Position(x: x - 1, y: y),
+        LogicalKeyboardKey.keyX => game.pacman,
         _ => null,
       };
 
