@@ -15,7 +15,8 @@ class University {
 
     create table teachers(
       identity integer primary key,
-      hours integer not null
+      hours integer not null,
+      lab integer
     ) strict;
 
     create table courses(
@@ -45,8 +46,10 @@ class University {
       teacher integer not null references teachers,
       subject integer not null references subjects,
       slot integer not null,
+      lab integer,
       unique(schedule, course, slot),
-      unique(schedule, teacher, slot)
+      unique(schedule, teacher, subject, slot),
+      unique(schedule, teacher, lab, slot)
     ) strict;
   ''';
 
@@ -62,10 +65,18 @@ class University {
   }
 
   late final _createTeacher = Query(_database, '''
-    insert into teachers(hours) values(?) returning identity
+    insert into teachers(hours, lab)
+    values(?, ?)
+    returning identity
   ''');
-  Teacher createTeacher(int hours) {
-    return Teacher._(_createTeacher.select([hours]).first.first as int);
+  Teacher createTeacher({required int hours, bool lecturer = false}) {
+    return Teacher._(_createTeacher
+        .select([
+          hours,
+          lecturer ? null : 1,
+        ])
+        .first
+        .first as int);
   }
 
   late final _createCourse = Query(_database, '''
@@ -98,8 +109,8 @@ class University {
 
   late final _addFixture = Query(_database, '''
     insert or ignore
-    into fixtures(schedule, course, teacher, subject, slot)
-    values (?, ?, ?, ?, ?)
+    into fixtures(schedule, course, teacher, subject, slot, lab)
+    values (?, ?, ?, ?, ?, ?)
   ''');
   void addFixture(
     Schedule schedule,
@@ -112,11 +123,12 @@ class University {
       fixture.teacher.value,
       fixture.subject.value,
       slot,
+      fixture.lab ? 1 : null,
     ]);
   }
 
   late final _possibleFixtures = Query(_database, '''
-    select courses.identity, teachers.identity, competencies.subject
+    select courses.identity, teachers.identity, competencies.subject, lab
     from courses
     join allocations
     on courses.identity = allocations.course
@@ -126,30 +138,32 @@ class University {
     on teachers.identity = competencies.teacher
   ''');
   late final possibleFixtures = _possibleFixtures.select().map((values) {
-    final [course, teacher, subject] = values;
+    final [course, teacher, subject, lab] = values;
 
     return Fixture(
       Course._(course as int),
       Teacher._(teacher as int),
       Subject._(subject as int),
+      (lab as int?) != null,
     );
   }).toList();
 
   late final _getSlots = Query(_database, '''
-    select course, teacher, subject, slot
+    select course, teacher, subject, slot, lab
     from fixtures
     where schedule = ?
   ''');
   List<List<Fixture>> getSlots(Schedule schedule) {
     final result = <int, List<Fixture>>{};
 
-    for (final [course, teacher, subject, slot]
+    for (final [course, teacher, subject, slot, lab]
         in _getSlots.select([schedule.value])) {
       result[slot as int] ??= [];
       result[slot]!.add(Fixture(
         Course._(course as int),
         Teacher._(teacher as int),
         Subject._(subject as int),
+        (lab as int?) != null,
       ));
     }
 
@@ -160,7 +174,7 @@ class University {
     select sum(
       abs(
         teachers.hours - (
-          select count()
+          select count(distinct slot)
           from fixtures
           where fixtures.teacher = teachers.identity
           and fixtures.schedule = ?

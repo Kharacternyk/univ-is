@@ -10,7 +10,7 @@ extension Mutate on University {
     moveRandomFixtures(schedule, 1);
 
     for (var slot = 0; slot < slotCount; ++slot) {
-      if (_random.nextDouble() < 0.5) {
+      if (_random.nextDouble() < 0.3) {
         final fixture =
             possibleFixtures[_random.nextInt(possibleFixtures.length)];
 
