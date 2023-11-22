@@ -17,17 +17,19 @@ extension Crossover on University {
       return;
     }
 
-    final firstCrossPoint = _random.nextInt(length);
-    final secondCrossPoint =
-        firstCrossPoint + 1 + _random.nextInt(length - firstCrossPoint);
+    var firstCrossPoint = _random.nextInt(length);
+    var secondCrossPoint = _random.nextInt(length);
 
-    for (var i = 0; i < firstCrossPoint; ++i) {
+    final minCrossPoint = min(firstCrossPoint, secondCrossPoint);
+    final maxCrossPoint = max(firstCrossPoint, secondCrossPoint);
+
+    for (var i = 0; i < minCrossPoint; ++i) {
       _addFixtures(child, firstParentSlots, i);
     }
-    for (var i = firstCrossPoint; i < secondCrossPoint; ++i) {
+    for (var i = minCrossPoint; i < maxCrossPoint; ++i) {
       _addFixtures(child, secondParentSlots, i);
     }
-    for (var i = secondCrossPoint; i < firstParentSlots.length; ++i) {
+    for (var i = maxCrossPoint; i < firstParentSlots.length; ++i) {
       _addFixtures(child, firstParentSlots, i);
     }
   }

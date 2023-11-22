@@ -10,13 +10,13 @@ class University {
   late final _database = sqlite3.openInMemory()..execute(_schema);
   static const _schema = '''
     create table subjects(
-      identity integer primary key
+      identity integer primary key,
+      lab integer
     ) strict;
 
     create table teachers(
       identity integer primary key,
-      hours integer not null,
-      lab integer
+      hours integer not null
     ) strict;
 
     create table courses(
@@ -48,7 +48,6 @@ class University {
       slot integer not null,
       lab integer,
       unique(schedule, course, slot),
-      unique(schedule, teacher, subject, slot),
       unique(schedule, teacher, lab, slot)
     ) strict;
   ''';
@@ -58,25 +57,19 @@ class University {
   University(this.slotCount);
 
   late final _createSubject = Query(_database, '''
-    insert into subjects default values returning identity
+    insert into subjects(lab) values(?) returning identity
   ''');
-  Subject createSubject() {
-    return Subject._(_createSubject.select().first.first as int);
+  Subject createSubject({bool lecture = false}) {
+    return Subject._(
+      _createSubject.select([lecture ? null : 1]).first.first as int,
+    );
   }
 
   late final _createTeacher = Query(_database, '''
-    insert into teachers(hours, lab)
-    values(?, ?)
-    returning identity
+    insert into teachers(hours) values(?) returning identity
   ''');
-  Teacher createTeacher({required int hours, bool lecturer = false}) {
-    return Teacher._(_createTeacher
-        .select([
-          hours,
-          lecturer ? null : 1,
-        ])
-        .first
-        .first as int);
+  Teacher createTeacher({required int hours}) {
+    return Teacher._(_createTeacher.select([hours]).first.first as int);
   }
 
   late final _createCourse = Query(_database, '''
@@ -136,6 +129,8 @@ class University {
     on allocations.subject = competencies.subject
     join teachers
     on teachers.identity = competencies.teacher
+    join subjects
+    on competencies.subject = subjects.identity
   ''');
   late final possibleFixtures = _possibleFixtures.select().map((values) {
     final [course, teacher, subject, lab] = values;

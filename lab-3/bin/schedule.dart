@@ -12,26 +12,27 @@ const mutantCount = 100;
 void main() {
   final university = University(slotCount);
 
-  final mathLabs = university.createSubject();
-  final mathLectures = university.createSubject();
-  final programmingLabs = university.createSubject();
-  final programmingLectures = university.createSubject();
+  final math = university.createSubject();
+  final programming = university.createSubject();
   final physics = university.createSubject();
+  final mathLectures = university.createSubject(lecture: true);
+  final programmingLectures = university.createSubject(lecture: true);
 
-  final josh = university.createTeacher(hours: 7, lecturer: true);
   final greg = university.createTeacher(hours: 6);
   final rhod = university.createTeacher(hours: 6);
   final steve = university.createTeacher(hours: 10);
+  final josh = university.createTeacher(hours: 2);
+  final tom = university.createTeacher(hours: 2);
 
   university
-    ..addCompetency(josh, mathLectures)
-    ..addCompetency(josh, programmingLectures)
-    ..addCompetency(greg, mathLabs)
+    ..addCompetency(greg, math)
     ..addCompetency(greg, physics)
-    ..addCompetency(rhod, programmingLabs)
+    ..addCompetency(rhod, programming)
     ..addCompetency(rhod, physics)
-    ..addCompetency(steve, mathLabs)
-    ..addCompetency(steve, programmingLabs);
+    ..addCompetency(steve, math)
+    ..addCompetency(steve, programming)
+    ..addCompetency(josh, mathLectures)
+    ..addCompetency(tom, programmingLectures);
 
   final mathematicians = university.createCourse();
   final programmers = university.createCourse();
@@ -39,12 +40,12 @@ void main() {
 
   university
     ..allocate(mathematicians, mathLectures, 2)
-    ..allocate(mathematicians, mathLabs, 5)
+    ..allocate(mathematicians, math, 5)
     ..allocate(mathematicians, physics, 2)
     ..allocate(mathematicians, programmingLectures, 1)
     ..allocate(programmers, mathLectures, 1)
     ..allocate(programmers, programmingLectures, 2)
-    ..allocate(programmers, programmingLabs, 6)
+    ..allocate(programmers, programming, 6)
     ..allocate(programmers, physics, 1)
     ..allocate(physicists, mathLectures, 1)
     ..allocate(physicists, physics, 8)
