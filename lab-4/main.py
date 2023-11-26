@@ -59,7 +59,7 @@ def get_teachers(subject, hour):
 
 
 def teacher_sorting_key(teacher):
-    return len(teachers[teacher][1])
+    return len([subject for subject in teachers[teacher][1] if subject_demand[subject]])
 
 
 subject_demand = {}
